@@ -6,9 +6,14 @@ from dataclasses import dataclass
 from typing import List, Optional
 import uuid
 from collections import defaultdict
+import logging
+
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'your-secret-key-change-in-production')
+
+app.logger.setLevel(logging.DEBUG)
+
 
 # Use environment variable for database path, fallback to local
 DATABASE = os.environ.get('DATABASE_PATH', 'timesheet.db')
@@ -222,20 +227,36 @@ class TimesheetManager:
             ))
         conn.close()
         return entries
-    
     def get_time_summary(self, user_id: int, start_date: str, end_date: str):
         """Get time summary for a user within a date range."""
         conn = sqlite3.connect(DATABASE)
         cursor = conn.cursor()
         
-        # Use ISO format with T to match the stored format
-        start_datetime = f"{start_date}T00:00:00"
-        end_datetime = f"{end_date}T23:59:59"
+        # DEBUG: First check ALL entries for this user
+        cursor.execute('SELECT ticket_name, start_time, end_time FROM time_entries WHERE user_id = ?', (user_id,))
+        all_user_entries = cursor.fetchall()
+        app.logger.info(f"DEBUG - User {user_id} has {len(all_user_entries)} total entries:")
+        for entry in all_user_entries[:5]:  # Show first 5
+            app.logger.info(f"DEBUG - All entries: {entry[0]}, start={entry[1]}, end={entry[2]}")
+        
+        # Add time component to dates for proper filtering
+        start_datetime = f"{start_date} 00:00:00"
+        end_datetime = f"{end_date} 23:59:59"
         
         app.logger.info(f"DEBUG - Querying user_id: {user_id}")
         app.logger.info(f"DEBUG - Date range: {start_datetime} to {end_datetime}")
         
-        # First, let's see what entries exist in the date range
+        # Check entries in date range WITHOUT time filter first
+        cursor.execute('''
+            SELECT ticket_name, start_time, end_time
+            FROM time_entries 
+            WHERE user_id = ?
+        ''', (user_id,))
+        
+        all_entries_no_filter = cursor.fetchall()
+        app.logger.info(f"DEBUG - Found {len(all_entries_no_filter)} entries for user (no date filter)")
+        
+        # Now with date filter
         cursor.execute('''
             SELECT ticket_name, start_time, end_time
             FROM time_entries 
@@ -283,6 +304,68 @@ class TimesheetManager:
         
         conn.close()
         return summary, round(total_time, 2)
+    
+    # def get_time_summary(self, user_id: int, start_date: str, end_date: str):
+    #     """Get time summary for a user within a date range."""
+    #     conn = sqlite3.connect(DATABASE)
+    #     cursor = conn.cursor()
+        
+    #     # Add time component to dates for proper filtering
+    #     start_datetime = f"{start_date} 00:00:00"
+    #     end_datetime = f"{end_date} 23:59:59"
+        
+    #     # DEBUG: Print what we're querying
+    #     app.logger.info(f"DEBUG - Querying user_id: {user_id}")
+    #     app.logger.info(f"DEBUG - Date range: {start_datetime} to {end_datetime}")
+        
+    #     # First, let's see what entries exist
+    #     cursor.execute('''
+    #         SELECT ticket_name, start_time, end_time
+    #         FROM time_entries 
+    #         WHERE user_id = ? 
+    #             AND start_time >= ? 
+    #             AND start_time <= ?
+    #     ''', (user_id, start_datetime, end_datetime))
+        
+    #     all_entries = cursor.fetchall()
+    #     app.logger.info(f"DEBUG - Found {len(all_entries)} entries in date range")
+    #     for entry in all_entries:
+    #         app.logger.info(f"DEBUG - Entry: {entry[0]}, {entry[1]}, {entry[2]}")
+        
+    #     cursor.execute('''
+    #         SELECT ticket_name, 
+    #                SUM(CASE 
+    #                    WHEN end_time IS NOT NULL 
+    #                    THEN (julianday(end_time) - julianday(start_time)) * 24
+    #                    ELSE 0 
+    #                END) as total_hours
+    #         FROM time_entries 
+    #         WHERE user_id = ? 
+    #             AND start_time >= ? 
+    #             AND start_time <= ?
+    #             AND end_time IS NOT NULL
+    #         GROUP BY ticket_name
+    #         ORDER BY total_hours DESC
+    #     ''', (user_id, start_datetime, end_datetime))
+        
+    #     results = cursor.fetchall()
+    #     print(f"DEBUG - SQL returned {len(results)} grouped results")
+    #     for result in results:
+    #         print(f"DEBUG - Result: {result[0]}, {result[1]} hours")
+        
+    #     summary = {}
+    #     total_time = 0
+    #     for row in results:
+    #         ticket_name = row[0]
+    #         hours = round(row[1], 2)
+    #         summary[ticket_name] = hours
+    #         total_time += hours
+        
+    #     app.logger.info(f"DEBUG - Final summary: {summary}")
+    #     app.logger.info(f"DEBUG - Final total_time: {total_time}")
+        
+    #     conn.close()
+    #     return summary, round(total_time, 2)
     
     def start_time_entry(self, user_id: int, ticket_name: str):
         """Start a new time entry for a user."""
@@ -444,15 +527,15 @@ def summary():
     end_date = request.args.get('end_date', today)
     
     # DEBUG: Print route values
-    app.logger.info(f"DEBUG ROUTE - User ID: {user_id}")
-    app.logger.info(f"DEBUG ROUTE - Date range: {start_date} to {end_date}")
+    print(f"DEBUG ROUTE - User ID: {user_id}")
+    print(f"DEBUG ROUTE - Date range: {start_date} to {end_date}")
     
     # Get summary data
     summary_data, total_time = timesheet.get_time_summary(user_id, start_date, end_date)
     
     # DEBUG: Print final route values
-    app.logger.info(f"DEBUG ROUTE - Summary data: {summary_data}")
-    app.logger.info(f"DEBUG ROUTE - Total time: {total_time}")
+    print(f"DEBUG ROUTE - Summary data: {summary_data}")
+    print(f"DEBUG ROUTE - Total time: {total_time}")
     
     return render_template('summary.html', 
                          current_user=current_user,
