@@ -1,0 +1,38 @@
+# docker-compose.yml
+
+services:
+  timesheet-app:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./volumes/app:/app
+      #- ./data/data:/app/data
+      #- ./data/templates:/app/templates
+      #- ./data/etc/timezone:/etc/timezone:ro      # Timezone
+      #- ./data/etc/localtime:/etc/localtime:ro    # Lokalzeit
+    environment:
+      - DATABASE_PATH=/app/data/timesheet.db
+      - FLASK_ENV=production
+      - TZ=Europe/Zurich
+    restart: unless-stopped
+    container_name: timesheet-app
+    # Run container as UID/GID 1001 (user tom)
+    user: "1001:1001"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.timesheet.rule=Host(`timesheet.t71.ch`)"
+      - "traefik.http.routers.timesheet.entrypoints=websecure"
+      - "traefik.http.routers.timesheet.tls=true"
+      - "traefik.http.routers.timesheet.tls.certresolver=letsencrypt"
+      - "traefik.http.services.timesheet.loadbalancer.server.port=5000"
+      - "traefik.http.services.timesheet.loadbalancer.server.scheme=http"
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
+
+volumes:
+  timesheet_data:

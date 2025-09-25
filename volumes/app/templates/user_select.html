@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benutzer auswählen</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #fafafa;
+            color: #333;
+            line-height: 1.5;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 400px;
+            width: 90%;
+            background: white;
+            border: 1px solid #e1e5e9;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 24px;
+            font-weight: 400;
+            margin-bottom: 30px;
+            color: #222;
+        }
+        
+        .user-list {
+            margin-bottom: 30px;
+        }
+        
+        .user-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: white;
+            border: 1px solid #d0d7de;
+            color: #333;
+            text-decoration: none;
+            font-size: 16px;
+            transition: background-color 0.2s;
+        }
+        
+        .user-btn:hover {
+            background: #f6f8fa;
+        }
+        
+        .add-user-section {
+            border-top: 1px solid #e1e5e9;
+            padding-top: 20px;
+        }
+        
+        .add-user-section h2 {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 15px;
+            color: #444;
+        }
+        
+        .add-user-form {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .add-user-form input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #d0d7de;
+            font-size: 14px;
+            outline: none;
+        }
+        
+        .add-user-form input:focus {
+            border-color: #0969da;
+        }
+        
+        .btn {
+            padding: 10px 16px;
+            border: 1px solid #d0d7de;
+            background: #0969da;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            border-color: #0969da;
+        }
+        
+        .btn:hover {
+            background: #0860ca;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>👤 Benutzer auswählen</h1>
+        
+        <div class="user-list">
+            {% for user in users %}
+            <a href="{{ url_for('switch_user', user_id=user.id) }}" class="user-btn">
+                {{ user.username }}
+            </a>
+            {% endfor %}
+        </div>
+        
+        <div class="add-user-section">
+            <h2>Neuen Benutzer anlegen</h2>
+            <form class="add-user-form" action="{{ url_for('add_user') }}" method="post">
+                <input type="text" name="username" placeholder="Benutzername" required>
+                <button type="submit" class="btn">Anlegen</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
