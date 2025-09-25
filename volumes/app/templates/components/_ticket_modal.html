@@ -1,0 +1,75 @@
+<!-- Add/Edit Ticket Modal -->
+
+<div id="ticketModal" class="modal" onclick="closeModalOnOutsideClick(event)">
+
+    <div class="modal-content" onclick="event.stopPropagation()">
+
+        <h3 id="modalTitle">Neues Zeitkonto erstellen</h3>
+
+        <form class="modal-form" id="ticketForm" action="{{ url_for('add_ticket') }}" method="post">
+
+            <input type="hidden" id="ticketId" name="ticket_id" value="">
+
+            <div>
+
+                <label for="modal-name">Name*</label>
+
+                <input type="text" id="modal-name" name="name" placeholder="Ticket/Auftrag Name" required>
+
+            </div>
+
+            <div>
+
+                <label for="modal-jira">Jira-Ticketnummer</label>
+
+                <input type="text" id="modal-jira" name="jira_ticket" placeholder="z.B. PROJ-123">
+
+            </div>
+
+            <div>
+
+                <label for="modal-matrix">Matrix-Ticketnummer</label>
+
+                <input type="text" id="modal-matrix" name="matrix_ticket" placeholder="z.B. MTX-456">
+
+            </div>
+
+            <div>
+
+                <label>Farbe</label>
+
+                <div class="color-selector">
+
+                    <div class="preset-color" style="background-color: #cf222e;" onclick="selectModalColor('#cf222e')" title="Rot"></div>
+
+                    <div class="preset-color" style="background-color: #fb8500;" onclick="selectModalColor('#fb8500')" title="Orange"></div>
+
+                    <div class="preset-color" style="background-color: #ffd60a;" onclick="selectModalColor('#ffd60a')" title="Gelb"></div>
+
+                    <div class="preset-color" style="background-color: #1a7f37;" onclick="selectModalColor('#1a7f37')" title="Grün"></div>
+
+                    <div class="preset-color" style="background-color: #0969da;" onclick="selectModalColor('#0969da')" title="Blau"></div>
+
+                    <div class="preset-color" style="background-color: #8250df;" onclick="selectModalColor('#8250df')" title="Violett"></div>
+
+                    <div class="preset-color selected" style="background-color: #656d76;" onclick="selectModalColor('#656d76')" title="Grau"></div>
+
+                    <input type="color" name="color" class="custom-color" value="#656d76" title="Eigene Farbe wählen">
+
+                </div>
+
+            </div>
+
+            <div class="modal-buttons">
+
+                <button type="button" class="btn btn-cancel" onclick="closeTicketModal()">Abbrechen</button>
+
+                <button type="submit" class="btn btn-primary" id="submitBtn">Erstellen</button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>

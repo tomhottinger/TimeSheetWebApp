@@ -1,274 +1,236 @@
-<!DOCTYPE html>
+{% extends "base.html" %}
 
-<html lang="de">
 
-<head>
 
-    <meta charset="UTF-8">
+{% block title %}Zusammenfassung - {{ current_user.username }}{% endblock %}
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Zusammenfassung - {{ current_user.username }}</title>
 
-    <style>
+{% block extra_css %}
 
-        * {
+<style>
 
-            margin: 0;
+    /* Summary-specific styles */
 
-            padding: 0;
+    .date-filter {
 
-            box-sizing: border-box;
+        background: white;
 
-        }
+        border: 1px solid #e1e5e9;
 
-        
+        padding: 20px;
 
-        body {
+        margin-bottom: 30px;
 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    }
 
-            background: #fafafa;
+    
 
-            color: #333;
+    .date-filter h2 {
 
-            line-height: 1.5;
+        font-size: 16px;
 
-            font-size: 14px;
+        font-weight: 500;
 
-        }
+        margin-bottom: 15px;
 
-        
+        color: #444;
 
-        .container {
+    }
 
-            max-width: 800px;
+    
 
-            margin: 0 auto;
+    .date-inputs {
 
-            padding: 20px;
+        display: flex;
 
-        }
+        gap: 15px;
 
-        
+        align-items: center;
 
-        .header {
+        flex-wrap: wrap;
 
-            display: flex;
+    }
 
-            justify-content: space-between;
+    
 
-            align-items: center;
+    .date-inputs label {
 
-            margin-bottom: 30px;
+        font-weight: 500;
 
-        }
+        color: #333;
 
-        
+    }
 
-        .nav-links {
+    
 
-            display: flex;
+    .summary-section {
 
-            gap: 15px;
+        background: white;
 
-            align-items: center;
+        border: 1px solid #e1e5e9;
 
-        }
+    }
 
-        
+    
 
-        .nav-link {
+    .summary-header {
 
-            color: #0969da;
+        background: #f6f8fa;
 
-            text-decoration: none;
+        padding: 16px;
 
-            font-size: 14px;
+        border-bottom: 1px solid #e1e5e9;
 
-            padding: 8px 12px;
+        display: flex;
 
-            border: 1px solid #0969da;
+        justify-content: space-between;
 
-            background: white;
+        align-items: center;
 
-            border-radius: 4px;
+    }
 
-        }
+    
 
-        
+    .summary-header h2 {
 
-        .nav-link:hover {
+        font-size: 18px;
 
-            background: #f6f8fa;
+        font-weight: 500;
 
-        }
+        color: #333;
 
-        
+    }
 
-        h1 {
+    
 
-            font-size: 24px;
+    .total-time {
 
-            font-weight: 400;
+        font-size: 16px;
 
-            color: #222;
+        font-weight: 600;
 
-        }
+        color: #0969da;
 
-        
+    }
 
-        .user-info {
+    
 
-            display: flex;
+    .summary-table {
 
-            align-items: center;
+        width: 100%;
 
-            gap: 10px;
+        border-collapse: collapse;
 
-            background: white;
+    }
 
-            padding: 8px 12px;
+    
 
-            border: 1px solid #e1e5e9;
+    .summary-table th {
 
-        }
+        background: white;
 
-        
+        padding: 12px 16px;
 
-        .user-switch {
+        text-align: left;
 
-            color: #0969da;
+        font-weight: 500;
 
-            text-decoration: none;
+        color: #333;
 
-            font-size: 12px;
+        border-bottom: 1px solid #e1e5e9;
 
-        }
+    }
 
-        
+    
 
-        .user-switch:hover {
+    .summary-table td {
 
-            text-decoration: underline;
+        padding: 12px 16px;
 
-        }
+        border-bottom: 1px solid #f1f3f4;
 
-        
+        vertical-align: middle;
 
-        .date-filter {
+    }
 
-            background: white;
+    
 
-            border: 1px solid #e1e5e9;
+    .summary-table tr:hover {
 
-            padding: 20px;
+        background: #f6f8fa;
 
-            margin-bottom: 30px;
+    }
 
-        }
+    
 
-        
+    .ticket-name {
 
-        .date-filter h2 {
+        font-weight: 500;
 
-            font-size: 16px;
+        color: #333;
 
-            font-weight: 500;
+    }
 
-            margin-bottom: 15px;
+    
 
-            color: #444;
+    .hours {
 
-        }
+        text-align: right;
 
-        
+        font-weight: 500;
+
+        color: #0969da;
+
+    }
+
+    
+
+    .percentage {
+
+        text-align: right;
+
+        color: #656d76;
+
+        font-size: 13px;
+
+    }
+
+    
+
+    .no-data {
+
+        text-align: center;
+
+        color: #656d76;
+
+        padding: 40px 20px;
+
+        background: white;
+
+    }
+
+    
+
+    .date-range-display {
+
+        color: #656d76;
+
+        font-size: 16px;
+
+        margin-bottom: 5px;
+
+    }
+
+    
+
+    @media (max-width: 768px) {
 
         .date-inputs {
 
-            display: flex;
+            flex-direction: column;
 
-            gap: 15px;
-
-            align-items: center;
-
-            flex-wrap: wrap;
-
-        }
-
-        
-
-        .date-inputs label {
-
-            font-weight: 500;
-
-            color: #333;
-
-        }
-
-        
-
-        .date-inputs input[type="date"] {
-
-            padding: 8px 12px;
-
-            border: 1px solid #d0d7de;
-
-            background: white;
-
-            font-size: 14px;
-
-            outline: none;
-
-        }
-
-        
-
-        .date-inputs input[type="date"]:focus {
-
-            border-color: #0969da;
-
-        }
-
-        
-
-        .btn {
-
-            padding: 8px 16px;
-
-            border: 1px solid #d0d7de;
-
-            background: #0969da;
-
-            color: white;
-
-            cursor: pointer;
-
-            font-size: 14px;
-
-            text-decoration: none;
-
-            display: inline-block;
-
-            border-color: #0969da;
-
-        }
-
-        
-
-        .btn:hover {
-
-            background: #0860ca;
-
-        }
-
-        
-
-        .summary-section {
-
-            background: white;
-
-            border: 1px solid #e1e5e9;
+            align-items: flex-start;
 
         }
 
@@ -276,355 +238,97 @@
 
         .summary-header {
 
-            background: #f6f8fa;
+            flex-direction: column;
 
-            padding: 16px;
+            align-items: flex-start;
 
-            border-bottom: 1px solid #e1e5e9;
-
-            display: flex;
-
-            justify-content: space-between;
-
-            align-items: center;
+            gap: 10px;
 
         }
 
-        
+    }
 
-        .summary-header h2 {
+</style>
 
-            font-size: 18px;
+{% endblock %}
 
-            font-weight: 500;
 
-            color: #333;
 
-        }
+{% block page_title %}Zusammenfassung{% endblock %}
 
-        
 
-        .total-time {
 
-            font-size: 16px;
+{% block nav_links %}
 
-            font-weight: 600;
+<a href="{{ url_for('index') }}" class="nav-link">Zurück zur Zeiterfassung</a>
 
-            color: #0969da;
+{% endblock %}
 
-        }
 
-        
 
-        .summary-table {
+{% block content %}
 
-            width: 100%;
+<!-- Date Filter -->
 
-            border-collapse: collapse;
+<div class="date-filter">
 
-        }
+    <h2>Zeitraum auswählen</h2>
 
-        
+    <form method="get" action="{{ url_for('summary') }}">
 
-        .summary-table th {
+        <div class="date-inputs">
 
-            background: white;
+            <label for="start_date">Von:</label>
 
-            padding: 12px 16px;
-
-            text-align: left;
-
-            font-weight: 500;
-
-            color: #333;
-
-            border-bottom: 1px solid #e1e5e9;
-
-        }
-
-        
-
-        .summary-table td {
-
-            padding: 12px 16px;
-
-            border-bottom: 1px solid #f1f3f4;
-
-            vertical-align: middle;
-
-        }
-
-        
-
-        .summary-table tr:hover {
-
-            background: #f6f8fa;
-
-        }
-
-        
-
-        .ticket-name {
-
-            font-weight: 500;
-
-            color: #333;
-
-        }
-
-        
-
-        .hours {
-
-            text-align: right;
-
-            font-weight: 500;
-
-            color: #0969da;
-
-        }
-
-        
-
-        .percentage {
-
-            text-align: right;
-
-            color: #656d76;
-
-            font-size: 13px;
-
-        }
-
-        
-
-        .no-data {
-
-            text-align: center;
-
-            color: #656d76;
-
-            padding: 40px 20px;
-
-            background: white;
-
-        }
-
-        
-
-        .date-range-display {
-
-            color: #656d76;
-
-            font-size: 16px;
-
-            margin-bottom: 5px;
-
-        }
-
-        
-
-        @media (max-width: 768px) {
-
-            .container {
-
-                padding: 15px;
-
-            }
+            <input type="date" id="start_date" name="start_date" value="{{ start_date }}" required>
 
             
 
-            .header {
+            <label for="end_date">Bis:</label>
 
-                flex-direction: column;
-
-                align-items: flex-start;
-
-                gap: 10px;
-
-            }
+            <input type="date" id="end_date" name="end_date" value="{{ end_date }}" required>
 
             
 
-            .date-inputs {
-
-                flex-direction: column;
-
-                align-items: flex-start;
-
-            }
-
-            
-
-            .summary-header {
-
-                flex-direction: column;
-
-                align-items: flex-start;
-
-                gap: 10px;
-
-            }
-
-        }
-
-    </style>
-
-</head>
-
-<body>
-
-    <div class="container">
-
-        <div class="header">
-
-            <h1>Zusammenfassung</h1>
-
-            <div class="nav-links">
-
-                <a href="{{ url_for('index') }}" class="nav-link">Zurück zur Zeiterfassung</a>
-
-            </div>
-
-            <div class="user-info">
-
-                <span>👤 {{ current_user.username }}</span>
-
-                <a href="{{ url_for('select_user') }}" class="user-switch">Wechseln</a>
-
-            </div>
+            <button type="submit" class="btn btn-primary">Aktualisieren</button>
 
         </div>
 
-        
+    </form>
 
-        <!-- Date Filter -->
+</div>
 
-        <div class="date-filter">
 
-            <h2>Zeitraum auswählen</h2>
 
-            <form method="get" action="{{ url_for('summary') }}">
+<!-- Summary Results -->
 
-                <div class="date-inputs">
+<div class="summary-section">
 
-                    <label for="start_date">Von:</label>
+    <div class="summary-header">
 
-                    <input type="date" id="start_date" name="start_date" value="{{ start_date }}" required>
+        <div>
 
-                    
+            <div class="date-range-display">
 
-                    <label for="end_date">Bis:</label>
+                {% if start_date == end_date %}
 
-                    <input type="date" id="end_date" name="end_date" value="{{ end_date }}" required>
+                    {{ start_date }}
 
-                    
+                {% else %}
 
-                    <button type="submit" class="btn">Aktualisieren</button>
+                    {{ start_date }} bis {{ end_date }}
 
-                </div>
-
-            </form>
-
-        </div>
-
-        
-
-        <!-- Summary Results -->
-
-        <div class="summary-section">
-
-            <div class="summary-header">
-
-                <div>
-
-                    <div class="date-range-display">
-
-                        {% if start_date == end_date %}
-
-                            {{ start_date }}
-
-                        {% else %}
-
-                            {{ start_date }} bis {{ end_date }}
-
-                        {% endif %}
-
-                    </div>
-
-                    <h2>Zeiterfassung nach Tickets</h2>
-
-                </div>
-
-                <div class="total-time">
-
-                    Gesamt: {{ "%.2f"|format(total_time) }}h
-
-                </div>
+                {% endif %}
 
             </div>
 
-            
+            <h2>Zeiterfassung nach Tickets</h2>
 
-            {% if summary_data %}
+        </div>
 
-                <table class="summary-table">
+        <div class="total-time">
 
-                    <thead>
-
-                        <tr>
-
-                            <th>Ticket</th>
-
-                            <th style="text-align: right;">Stunden</th>
-
-                            <th style="text-align: right;">Anteil</th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                        {% for ticket_name, hours in summary_data.items() %}
-
-                        <tr>
-
-                            <td class="ticket-name">{{ ticket_name }}</td>
-
-                            <td class="hours">{{ "%.2f"|format(hours) }}h</td>
-
-                            <td class="percentage">
-
-                                {% if total_time > 0 %}
-
-                                    {{ "%.1f"|format((hours / total_time) * 100) }}%
-
-                                {% else %}
-
-                                    0%
-
-                                {% endif %}
-
-                            </td>
-
-                        </tr>
-
-                        {% endfor %}
-
-                    </tbody>
-
-                </table>
-
-            {% else %}
-
-                <div class="no-data">
-
-                    Keine Daten für den ausgewählten Zeitraum gefunden.
-
-                </div>
-
-            {% endif %}
+            Gesamt: {{ "%.2f"|format(total_time) }}h
 
         </div>
 
@@ -632,24 +336,66 @@
 
     
 
-    <script>
+    {% if summary_data %}
 
-        // Set default date range to today if both are the same
+        <table class="summary-table">
 
-        document.addEventListener('DOMContentLoaded', function() {
+            <thead>
 
-            const startDate = document.getElementById('start_date');
+                <tr>
 
-            const endDate = document.getElementById('end_date');
+                    <th>Ticket</th>
 
-            
+                    <th style="text-align: right;">Stunden</th>
 
-            // Quick date range buttons could be added here in the future
+                    <th style="text-align: right;">Anteil</th>
 
-        });
+                </tr>
 
-    </script>
+            </thead>
 
-</body>
+            <tbody>
 
-</html>
+                {% for ticket_name, hours in summary_data.items() %}
+
+                <tr>
+
+                    <td class="ticket-name">{{ ticket_name }}</td>
+
+                    <td class="hours">{{ "%.2f"|format(hours) }}h</td>
+
+                    <td class="percentage">
+
+                        {% if total_time > 0 %}
+
+                            {{ "%.1f"|format((hours / total_time) * 100) }}%
+
+                        {% else %}
+
+                            0%
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    {% else %}
+
+        <div class="no-data">
+
+            Keine Daten für den ausgewählten Zeitraum gefunden.
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

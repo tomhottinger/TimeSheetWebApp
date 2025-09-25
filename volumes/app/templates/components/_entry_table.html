@@ -1,0 +1,205 @@
+<!-- Entries Table -->
+
+<div class="entries-section">
+
+    <h2>Erfasste Zeiten</h2>
+
+    {% if entries %}
+
+        {% for date in entries_by_date.keys()|sort(reverse=True) %}
+
+            {% set day_entries = entries_by_date[date] %}
+
+            <div class="date-section">
+
+                <div class="date-header {% if date == today %}today{% endif %} {% if date != today %}collapsed{% endif %}" onclick="toggleDateSection('{{ date }}')">
+
+                    <span>
+
+                        {% if date == today %}
+
+                            Heute ({{ date }})
+
+                        {% else %}
+
+                            {{ date }}
+
+                        {% endif %}
+
+                        {% set day_total = 0 %}
+
+                        {% for entry in day_entries %}
+
+                            {% if entry.end_time %}
+
+                                {% set start = entry.start_time | as_datetime %}
+
+                                {% set end = entry.end_time | as_datetime %}
+
+                                {% set duration = ((end - start).total_seconds() / 3600) | round(2) %}
+
+                                {% set day_total = day_total + duration %}
+
+                            {% endif %}
+
+                        {% endfor %}
+
+                        {% if day_total > 0 %}
+
+                            <span class="day-total">- {{ "%.2f"|format(day_total) }}h</span>
+
+                        {% endif %}
+
+                    </span>
+
+                    <span class="collapse-icon">▼</span>
+
+                </div>
+
+                <div class="date-entries" id="entries-{{ date }}" {% if date != today %}style="display: none;"{% endif %}>
+
+                    <table class="entries-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Ticket</th>
+
+                                <th>Start</th>
+
+                                <th>Ende</th>
+
+                                <th>Dauer</th>
+
+                                <th>Bemerkungen</th>
+
+                                <th>Aktionen</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for entry in day_entries|sort(attribute='start_time', reverse=True) %}
+
+                            <tr>
+
+                                <td><strong>{{ entry.ticket_name }}</strong></td>
+
+                                <td style="width: 140px;">
+
+                                    <form style="display: inline;" action="{{ url_for('update_entry') }}" method="post">
+
+                                        <input type="hidden" name="entry_id" value="{{ entry.id }}">
+
+                                        <input type="datetime-local" name="start_time" 
+
+                                               value="{{ entry.start_time[:19] if entry.start_time else '' }}"
+
+                                               onchange="this.form.submit(); setTimeout(() => window.location.reload(), 100);" style="width: 130px;">
+
+                                        <input type="hidden" name="end_time" value="{{ entry.end_time[:19] if entry.end_time else '' }}">
+
+                                        <input type="hidden" name="memo" value="{{ entry.memo }}">
+
+                                    </form>
+
+                                </td>
+
+                                <td style="width: 140px;">
+
+                                    {% if entry.end_time %}
+
+                                    <form style="display: inline;" action="{{ url_for('update_entry') }}" method="post">
+
+                                        <input type="hidden" name="entry_id" value="{{ entry.id }}">
+
+                                        <input type="hidden" name="start_time" value="{{ entry.start_time[:19] if entry.start_time else '' }}">
+
+                                        <input type="datetime-local" name="end_time" 
+
+                                               value="{{ entry.end_time[:19] }}"
+
+                                               onchange="this.form.submit(); setTimeout(() => window.location.reload(), 100);" style="width: 130px;">
+
+                                        <input type="hidden" name="memo" value="{{ entry.memo }}">
+
+                                    </form>
+
+                                    {% else %}
+
+                                    <span class="running-indicator">Läuft...</span>
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td class="duration" style="width: 60px;">
+
+                                    {% if entry.end_time %}
+
+                                        {% set start = entry.start_time | as_datetime %}
+
+                                        {% set end = entry.end_time | as_datetime %}
+
+                                        {% set duration = ((end - start).total_seconds() / 3600) | round(2) %}
+
+                                        {{ "%.2f"|format(duration) }}h
+
+                                    {% else %}
+
+                                        <span id="running-{{ entry.id }}">Läuft...</span>
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td>
+
+                                    <form style="display: inline;" action="{{ url_for('update_entry') }}" method="post">
+
+                                        <input type="hidden" name="entry_id" value="{{ entry.id }}">
+
+                                        <input type="hidden" name="start_time" value="{{ entry.start_time[:19] if entry.start_time else '' }}">
+
+                                        <input type="hidden" name="end_time" value="{{ entry.end_time[:19] if entry.end_time else '' }}">
+
+                                        <textarea name="memo" placeholder="Bemerkungen..." onchange="this.form.submit(); setTimeout(() => window.location.reload(), 100);">{{ entry.memo }}</textarea>
+
+                                    </form>
+
+                                </td>
+
+                                <td style="width: 60px;">
+
+                                    <button class="delete-btn" onclick="if(confirm('Eintrag löschen?')) window.location.href='{{ url_for('delete_entry', entry_id=entry.id) }}'">×</button>
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+    <div class="no-tickets">
+
+        Noch keine Zeiten erfasst.
+
+    </div>
+
+    {% endif %}
+
+</div>
