@@ -252,7 +252,7 @@ restart_container() {
 
     if docker ps | grep -q "$CONTAINER_NAME"; then
 
-        docker-compose restart
+        docker compose restart
 
         
 
