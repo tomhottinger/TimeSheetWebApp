@@ -1,12 +1,12 @@
-// Drag and Drop functionality for ticket sorting
+// Drag and Drop functionality for ticket sorting - FIXED VERSION
+
+
 
 const DragDropModule = {
 
     draggedElement: null,
 
     draggedIndex: -1,
-
-    dropTargetIndex: -1,
 
     
 
@@ -36,43 +36,31 @@ const DragDropModule = {
 
         
 
-        // Get all drag handles instead of buttons
-
-        const dragHandles = Array.from(document.querySelectorAll('.drag-handle[data-ticket-id]'));
-
-        console.log(`DragDropModule: Found ${dragHandles.length} drag handles`);
-
-        
-
-        dragHandles.forEach((handle, index) => {
-
-            console.log(`DragDropModule: Setting up drag handle ${index}:`, handle.dataset.ticketId);
-
-            handle.draggable = true;
-
-            
-
-            handle.addEventListener('dragstart', this.handleDragStart.bind(this));
-
-            handle.addEventListener('dragover', this.handleDragOver.bind(this));
-
-            handle.addEventListener('drop', this.handleDrop.bind(this));
-
-            handle.addEventListener('dragend', this.handleDragEnd.bind(this));
-
-            handle.addEventListener('dragenter', this.handleDragEnter.bind(this));
-
-            handle.addEventListener('dragleave', this.handleDragLeave.bind(this));
-
-        });
-
-        
-
-        // Also add event listeners to ticket buttons for drop zones
+        // Get all draggable ticket buttons (those with data-ticket-id)
 
         const ticketButtons = this.getDraggableButtons();
 
-        ticketButtons.forEach(button => {
+        console.log(`DragDropModule: Found ${ticketButtons.length} draggable tickets`);
+
+        
+
+        ticketButtons.forEach((button, index) => {
+
+            console.log(`DragDropModule: Setting up ticket ${index}:`, button.dataset.ticketId);
+
+            
+
+            // Make the entire button draggable
+
+            button.draggable = true;
+
+            
+
+            // Add all drag event listeners to the button itself
+
+            button.addEventListener('dragstart', this.handleDragStart.bind(this));
+
+            button.addEventListener('dragend', this.handleDragEnd.bind(this));
 
             button.addEventListener('dragover', this.handleDragOver.bind(this));
 
@@ -82,6 +70,22 @@ const DragDropModule = {
 
             button.addEventListener('dragleave', this.handleDragLeave.bind(this));
 
+            
+
+            // Prevent link navigation during drag
+
+            const link = button.querySelector('a');
+
+            if (link) {
+
+                link.addEventListener('dragstart', (e) => {
+
+                    e.preventDefault();
+
+                });
+
+            }
+
         });
 
     },
@@ -90,13 +94,9 @@ const DragDropModule = {
 
     getDraggableButtons: function() {
 
-        // Get all ticket buttons with data-ticket-id, excluding stop and add buttons
+        // Get all ticket buttons with data-ticket-id (exclude stop and add buttons)
 
-        const buttons = Array.from(document.querySelectorAll('.ticket-btn[data-ticket-id]'));
-
-        console.log('DragDropModule: Found draggable buttons:', buttons.map(b => ({id: b.dataset.ticketId, element: b})));
-
-        return buttons;
+        return Array.from(document.querySelectorAll('.ticket-btn[data-ticket-id]'));
 
     },
 
@@ -104,51 +104,37 @@ const DragDropModule = {
 
     handleDragStart: function(e) {
 
-        // Make sure we get the actual ticket button, not a child element
-
-        let target = e.target;
-
-        while (target && !target.dataset.ticketId) {
-
-            target = target.parentElement;
-
-        }
-
-        
-
-        if (!target || !target.dataset.ticketId) {
-
-            console.error('DragDropModule: Could not find ticket button');
-
-            return;
-
-        }
-
-        
-
-        this.draggedElement = target;
+        this.draggedElement = e.currentTarget;
 
         const buttons = this.getDraggableButtons();
 
-        this.draggedIndex = buttons.indexOf(target);
+        this.draggedIndex = buttons.indexOf(this.draggedElement);
 
         
 
-        console.log('DragDropModule: Drag start', target.dataset.ticketId, 'at index', this.draggedIndex);
+        console.log('DragDropModule: Drag start', this.draggedElement.dataset.ticketId, 'at index', this.draggedIndex);
 
         
 
-        target.style.opacity = '0.5';
+        // Visual feedback
+
+        this.draggedElement.style.opacity = '0.4';
+
+        this.draggedElement.classList.add('dragging');
+
+        
+
+        // Set drag data
 
         e.dataTransfer.effectAllowed = 'move';
 
-        e.dataTransfer.setData('text/plain', target.dataset.ticketId);
+        e.dataTransfer.setData('text/plain', this.draggedElement.dataset.ticketId);
 
         
 
-        // Prevent the link from working during drag
+        // Prevent link from activating
 
-        const link = target.querySelector('a');
+        const link = this.draggedElement.querySelector('a');
 
         if (link) {
 
@@ -160,111 +146,21 @@ const DragDropModule = {
 
     
 
-    handleDragOver: function(e) {
-
-        e.preventDefault();
-
-        e.dataTransfer.dropEffect = 'move';
-
-        return false;
-
-    },
-
-    
-
-    handleDragEnter: function(e) {
-
-        // Make sure we get the actual ticket button
-
-        let target = e.target;
-
-        while (target && !target.dataset.ticketId) {
-
-            target = target.parentElement;
-
-        }
-
-        
-
-        if (target && target.dataset.ticketId && target !== this.draggedElement) {
-
-            // Remove previous indicators
-
-            this.clearDropIndicators();
-
-            
-
-            // Add indicator to current target
-
-            target.style.borderLeft = '3px solid #0969da';
-
-            
-
-            const buttons = this.getDraggableButtons();
-
-            this.dropTargetIndex = buttons.indexOf(target);
-
-            console.log('DragDropModule: Drag enter target index', this.dropTargetIndex, 'ticket:', target.dataset.ticketId);
-
-        }
-
-    },
-
-    
-
-    handleDragLeave: function(e) {
-
-        if (e.target.dataset.ticketId) {
-
-            e.target.style.borderLeft = '';
-
-        }
-
-    },
-
-    
-
-    handleDrop: function(e) {
-
-        e.preventDefault();
-
-        e.stopPropagation();
-
-        
-
-        console.log('DragDropModule: Drop - moving from index', this.draggedIndex, 'to', this.dropTargetIndex);
-
-        
-
-        if (this.draggedIndex !== -1 && this.dropTargetIndex !== -1 && 
-
-            this.draggedIndex !== this.dropTargetIndex) {
-
-            
-
-            this.moveTicketButton(this.draggedIndex, this.dropTargetIndex);
-
-            this.saveOrder();
-
-        }
-
-        
-
-        return false;
-
-    },
-
-    
-
     handleDragEnd: function(e) {
 
         console.log('DragDropModule: Drag end');
 
         
 
-        // Reset styles
+        // Reset visual feedback
 
-        e.target.style.opacity = '';
+        e.currentTarget.style.opacity = '';
+
+        e.currentTarget.classList.remove('dragging');
+
+        
+
+        // Clear all drop indicators
 
         this.clearDropIndicators();
 
@@ -272,7 +168,7 @@ const DragDropModule = {
 
         // Restore link functionality
 
-        const link = e.target.querySelector('a');
+        const link = e.currentTarget.querySelector('a');
 
         if (link) {
 
@@ -288,7 +184,131 @@ const DragDropModule = {
 
         this.draggedIndex = -1;
 
-        this.dropTargetIndex = -1;
+    },
+
+    
+
+    handleDragOver: function(e) {
+
+        // Necessary to allow dropping
+
+        e.preventDefault();
+
+        e.dataTransfer.dropEffect = 'move';
+
+        return false;
+
+    },
+
+    
+
+    handleDragEnter: function(e) {
+
+        const target = e.currentTarget;
+
+        
+
+        // Don't show indicator when hovering over self
+
+        if (target === this.draggedElement) {
+
+            return;
+
+        }
+
+        
+
+        // Clear previous indicators
+
+        this.clearDropIndicators();
+
+        
+
+        // Add visual indicator
+
+        target.style.borderLeft = '4px solid #0969da';
+
+        target.style.marginLeft = '-2px';
+
+        
+
+        console.log('DragDropModule: Drag enter target:', target.dataset.ticketId);
+
+    },
+
+    
+
+    handleDragLeave: function(e) {
+
+        // Only clear if we're leaving the button entirely, not just entering a child
+
+        const target = e.currentTarget;
+
+        const relatedTarget = e.relatedTarget;
+
+        
+
+        // Check if we're moving to a child element
+
+        if (relatedTarget && target.contains(relatedTarget)) {
+
+            return;
+
+        }
+
+        
+
+        target.style.borderLeft = '';
+
+        target.style.marginLeft = '';
+
+    },
+
+    
+
+    handleDrop: function(e) {
+
+        e.preventDefault();
+
+        e.stopPropagation();
+
+        
+
+        const dropTarget = e.currentTarget;
+
+        
+
+        // Don't do anything if dropping on self
+
+        if (dropTarget === this.draggedElement) {
+
+            return false;
+
+        }
+
+        
+
+        const buttons = this.getDraggableButtons();
+
+        const dropTargetIndex = buttons.indexOf(dropTarget);
+
+        
+
+        console.log('DragDropModule: Drop - moving from index', this.draggedIndex, 'to', dropTargetIndex);
+
+        
+
+        if (this.draggedIndex !== -1 && dropTargetIndex !== -1) {
+
+            this.moveTicketButton(this.draggedIndex, dropTargetIndex);
+
+            this.saveOrder();
+
+        }
+
+        
+
+        return false;
 
     },
 
@@ -299,6 +319,8 @@ const DragDropModule = {
         document.querySelectorAll('.ticket-btn[data-ticket-id]').forEach(btn => {
 
             btn.style.borderLeft = '';
+
+            btn.style.marginLeft = '';
 
         });
 
@@ -330,11 +352,7 @@ const DragDropModule = {
 
         
 
-        // Remove dragged element temporarily
-
-        const nextSibling = draggedButton.nextSibling;
-
-        draggedButton.remove();
+        console.log('DragDropModule: Moving button in DOM...');
 
         
 
@@ -416,7 +434,7 @@ const DragDropModule = {
 
                 console.error('DragDropModule: Failed to save order:', data.error);
 
-                // Reload page on error to restore original order
+                alert('Fehler beim Speichern der Reihenfolge');
 
                 window.location.reload();
 
@@ -428,7 +446,7 @@ const DragDropModule = {
 
             console.error('DragDropModule: Error saving order:', error);
 
-            // Reload page on error to restore original order
+            alert('Fehler beim Speichern der Reihenfolge');
 
             window.location.reload();
 
