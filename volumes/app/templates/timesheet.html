@@ -15,7 +15,7 @@
 {% endblock %}
 
 
-
+ 
 {% block nav_links %}
 
 <a href="{{ url_for('summary') }}" class="nav-link">Zusammenfassung</a>
@@ -25,6 +25,8 @@
 
 
 {% block content %}
+
+
 
 <!-- Tickets Section at the top -->
 
@@ -52,13 +54,17 @@
 
     
 
-    <!-- Regular Tickets -->
+    <!-- Regular Tickets - now with drag handles -->
 
     {% for ticket in tickets %}
 
     <div class="ticket-btn {% if current_entry_id %}{% for entry in entries %}{% if entry.id == current_entry_id and entry.ticket_name == ticket.name %}active{% endif %}{% endfor %}{% endif %}"
 
-         style="background-color: {{ ticket.color }};">
+         style="background-color: {{ ticket.color }};"
+
+         data-ticket-id="{{ ticket.id }}">
+
+        <div class="drag-handle" data-ticket-id="{{ ticket.id }}"></div>
 
         <a href="{{ url_for('start_timer', ticket_name=ticket.name) }}" 
 
@@ -118,6 +124,8 @@
 
 {% include 'components/_entry_table.html' %}
 
+
+
 {% endblock %}
 
 
@@ -127,5 +135,7 @@
 <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
 
 <script src="{{ url_for('static', filename='js/timer.js') }}"></script>
+
+<script src="{{ url_for('static', filename='js/drag-drop.js') }}"></script>
 
 {% endblock %}

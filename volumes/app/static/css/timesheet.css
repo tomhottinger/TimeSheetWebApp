@@ -452,6 +452,152 @@
 
 
 
+/* Drag and Drop styles */
+
+
+
+/* Draggable ticket buttons */
+
+.ticket-btn[draggable="true"] {
+
+    cursor: move;
+
+    transition: opacity 0.2s, border 0.2s, transform 0.2s;
+
+}
+
+
+
+.ticket-btn[draggable="true"]:hover {
+
+    opacity: 0.9;
+
+}
+
+
+
+/* Visual feedback during drag */
+
+.ticket-btn.dragging {
+
+    opacity: 0.5;
+
+    transform: scale(0.95);
+
+}
+
+
+
+.ticket-btn.drag-over {
+
+    border: 2px solid #0969da !important;
+
+    box-shadow: 0 0 10px rgba(9, 105, 218, 0.3);
+
+}
+
+
+
+/* Prevent text selection during drag operations */
+
+.tickets-grid.dragging {
+
+    user-select: none;
+
+    -webkit-user-select: none;
+
+    -moz-user-select: none;
+
+    -ms-user-select: none;
+
+}
+
+
+
+/* Drag handle styling */
+
+.drag-handle {
+
+    position: absolute;
+
+    top: 2px;
+
+    left: 2px;
+
+    width: 16px;
+
+    height: 16px;
+
+    cursor: move;
+
+    background: rgba(0, 0, 0, 0.3);
+
+    border-radius: 2px;
+
+    z-index: 10;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+
+
+.drag-handle::before {
+
+    content: "⋮⋮";
+
+    font-size: 10px;
+
+    color: rgba(255, 255, 255, 0.8);
+
+    line-height: 5px;
+
+    font-weight: bold;
+
+}
+
+
+
+.drag-handle:hover {
+
+    background: rgba(0, 0, 0, 0.5);
+
+}
+
+
+
+.drag-handle:hover::before {
+
+    color: white;
+
+}
+
+
+
+/* Remove the old pseudo-element styling since we now have a real element */
+
+.ticket-btn[data-ticket-id]::before {
+
+    display: none;
+
+}
+
+
+
+/* Prevent accidental clicks during drag operations */
+
+.ticket-btn.dragging a {
+
+    pointer-events: none;
+
+}
+
+
+
 /* Responsive */
 
 @media (max-width: 768px) {

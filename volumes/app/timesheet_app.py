@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for, s
 from datetime import datetime, timedelta
 import sqlite3
 import os
+import json
 from dataclasses import dataclass
 from typing import List, Optional
 import uuid
@@ -46,6 +47,26 @@ def init_database():
         )
     ''')
     
+    # Add sort_order column to tickets table if it doesn't exist
+    cursor.execute('''
+        PRAGMA table_info(tickets)
+    ''')
+    columns = [column[1] for column in cursor.fetchall()]
+    if 'sort_order' not in columns:
+        cursor.execute('''
+            ALTER TABLE tickets ADD COLUMN sort_order INTEGER DEFAULT 0
+        ''')
+    
+    # User ticket order preferences table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS user_ticket_order (
+            user_id INTEGER PRIMARY KEY,
+            ticket_order TEXT,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users (id)
+        )
+    ''')
+    
     # Time entries table
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS time_entries (
@@ -71,8 +92,6 @@ def init_database():
     ''')
     
     # Create some default users for testing
-    #cursor.execute('INSERT OR IGNORE INTO users (username) VALUES (?)', ('Admin',))
-    #cursor.execute('INSERT OR IGNORE INTO users (username) VALUES (?)', ('User1',))
     cursor.execute('INSERT OR IGNORE INTO users (username) VALUES (?)', ('demoUser',))
     
     conn.commit()
@@ -138,21 +157,60 @@ class TimesheetManager:
             return None  # Username already exists
     
     def get_tickets(self, user_id: int):
-        """Get all tickets for a specific user."""
+        """Get all tickets for a specific user in the correct order."""
         conn = sqlite3.connect(DATABASE)
         cursor = conn.cursor()
+        
+        # First, get the user's custom order if it exists
+        cursor.execute('SELECT ticket_order FROM user_ticket_order WHERE user_id = ?', (user_id,))
+        order_row = cursor.fetchone()
+        custom_order = json.loads(order_row[0]) if order_row and order_row[0] else []
+        
+        # Get all tickets
         cursor.execute('''
             SELECT id, user_id, name, color, jira_ticket, matrix_ticket 
-            FROM tickets WHERE user_id = ? ORDER BY name
+            FROM tickets WHERE user_id = ?
         ''', (user_id,))
-        tickets = []
+        
+        all_tickets = {}
         for row in cursor.fetchall():
-            tickets.append(Ticket(
+            ticket = Ticket(
                 id=row[0], user_id=row[1], name=row[2], color=row[3],
                 jira_ticket=row[4], matrix_ticket=row[5]
-            ))
+            )
+            all_tickets[ticket.id] = ticket
+        
         conn.close()
-        return tickets
+        
+        # Sort tickets according to custom order, then alphabetically for new ones
+        ordered_tickets = []
+        
+        # First, add tickets in custom order
+        for ticket_id in custom_order:
+            if ticket_id in all_tickets:
+                ordered_tickets.append(all_tickets[ticket_id])
+                del all_tickets[ticket_id]
+        
+        # Then add any remaining tickets alphabetically
+        remaining_tickets = sorted(all_tickets.values(), key=lambda t: t.name)
+        ordered_tickets.extend(remaining_tickets)
+        
+        return ordered_tickets
+    
+    def save_ticket_order(self, user_id: int, ticket_order: List[str]):
+        """Save the user's custom ticket order."""
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+        
+        order_json = json.dumps(ticket_order)
+        cursor.execute('''
+            INSERT OR REPLACE INTO user_ticket_order (user_id, ticket_order, updated_at)
+            VALUES (?, ?, ?)
+        ''', (user_id, order_json, datetime.now().isoformat()))
+        
+        conn.commit()
+        conn.close()
+        return True
     
     def get_ticket_by_id(self, user_id: int, ticket_id: str):
         """Get a specific ticket by ID for a user."""
@@ -537,6 +595,34 @@ def get_ticket(ticket_id):
         })
     else:
         return jsonify({'error': 'Ticket not found'}), 404
+
+@app.route('/save_ticket_order', methods=['POST'])
+def save_ticket_order():
+    redirect_response = require_user()
+    if redirect_response:
+        return jsonify({'success': False, 'error': 'No user selected'})
+    
+    user_id = get_current_user_id()
+    data = request.get_json()
+    
+    if not data or 'ticket_order' not in data:
+        return jsonify({'success': False, 'error': 'Invalid data'})
+    
+    ticket_order = data['ticket_order']
+    
+    # Validate that all ticket IDs belong to the user
+    user_tickets = timesheet.get_tickets(user_id)
+    valid_ticket_ids = {ticket.id for ticket in user_tickets}
+    
+    # Filter out any invalid ticket IDs
+    filtered_order = [tid for tid in ticket_order if tid in valid_ticket_ids]
+    
+    try:
+        timesheet.save_ticket_order(user_id, filtered_order)
+        return jsonify({'success': True})
+    except Exception as e:
+        app.logger.error(f"Error saving ticket order: {e}")
+        return jsonify({'success': False, 'error': 'Database error'})
 
 @app.route('/start_timer/<ticket_name>')
 def start_timer(ticket_name):

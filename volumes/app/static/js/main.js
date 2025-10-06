@@ -1,5 +1,7 @@
 // Main JavaScript utilities
 
+
+
 document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize all modules
@@ -10,15 +12,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
     }
 
+
+
     if (typeof ModalModule !== 'undefined') {
 
         ModalModule.init();
 
     }
 
+
+
     if (typeof DateToggleModule !== 'undefined') {
 
         DateToggleModule.init();
+
+    }
+
+
+
+    if (typeof DragDropModule !== 'undefined') {
+
+        DragDropModule.init();
 
     }
 
