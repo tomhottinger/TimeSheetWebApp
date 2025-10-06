@@ -32,6 +32,12 @@ DATABASE = os.environ.get('DATABASE_PATH', 'timesheet.db')
 
 
 
+# REGISTRATION CONTROL - Set to False to disable new registrations
+
+ALLOW_REGISTRATION = os.environ.get('ALLOW_REGISTRATION', 'true').lower() == 'true'
+
+
+
 def init_database():
 
     """Initialize the SQLite database with required tables."""
@@ -956,13 +962,25 @@ def login():
 
     
 
-    return render_template('login.html')
+    # Pass registration status to template
+
+    return render_template('login.html', allow_registration=ALLOW_REGISTRATION)
 
 
 
 @app.route('/register', methods=['GET', 'POST'])
 
 def register():
+
+    # Check if registration is allowed
+
+    if not ALLOW_REGISTRATION:
+
+        flash('Registrierung ist derzeit deaktiviert. Bitte kontaktieren Sie den Administrator.', 'error')
+
+        return redirect(url_for('login'))
+
+    
 
     if request.method == 'POST':
 
@@ -1487,6 +1505,12 @@ if __name__ == '__main__':
     print("Multiuser Timesheet-Webapp mit Login wird gestartet...")
 
     print(f"Database: {DATABASE}")
+
+    print(f"Registration: {'ENABLED' if ALLOW_REGISTRATION else 'DISABLED'}")
+
+    if not ALLOW_REGISTRATION:
+
+        print("ℹ️  Neue Registrierungen sind deaktiviert")
 
     print("Standard-Login: demoUser / demo123")
 

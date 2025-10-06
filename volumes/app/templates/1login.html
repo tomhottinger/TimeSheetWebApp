@@ -284,20 +284,6 @@
 
         }
 
-        
-
-        .registration-disabled {
-
-            text-align: center;
-
-            color: #656d76;
-
-            font-size: 13px;
-
-            font-style: italic;
-
-        }
-
     </style>
 
 </head>
@@ -362,15 +348,7 @@
 
         <div class="links">
 
-            {% if allow_registration %}
-
-                <p>Noch kein Account? <a href="{{ url_for('register') }}">Jetzt registrieren</a></p>
-
-            {% else %}
-
-                <p class="registration-disabled">Registrierung ist derzeit deaktiviert</p>
-
-            {% endif %}
+            <p>Noch kein Account? <a href="{{ url_for('register') }}">Jetzt registrieren</a></p>
 
         </div>
 
