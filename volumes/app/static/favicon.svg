@@ -1,0 +1,10 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
+  <!-- Hourglass -->
+  <path d='M25 10 L45 10 L35 30 L25 10 M25 50 L45 50 L35 30 L25 50' fill='#f59e0b' stroke='#000' stroke-width='2'/>
+  <rect x='23' y='8' width='24' height='4' fill='#000'/>
+  <rect x='23' y='48' width='24' height='4' fill='#000'/>
+  <!-- Clock -->
+  <circle cx='70' cy='30' r='22' fill='#fff' stroke='#000' stroke-width='2'/>
+  <line x1='70' y1='30' x2='70' y2='18' stroke='#000' stroke-width='2.5' stroke-linecap='round'/>
+  <line x1='70' y1='30' x2='78' y2='30' stroke='#000' stroke-width='2' stroke-linecap='round'/>
+  <circle cx='70' cy='30' r='3' fill='#000'/>
