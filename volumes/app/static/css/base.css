@@ -1,341 +1,153 @@
 /* Base styles for all pages */
-
 * {
-
     margin: 0;
-
     padding: 0;
-
     box-sizing: border-box;
-
 }
-
-
 
 body {
-
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-
     background: #fafafa;
-
-    color: #333;
-
-    line-height: 1.5;
-
-    font-size: 14px;
-
-    
-
-    /* Hintergrundbild hinzufügen */
-
     background-image: url('/static/img/bg.png');
-
     background-size: cover;
-
     background-position: center;
-
-    background-repeat: no-repeat;
-
     background-attachment: fixed;
-
+    color: #333;
+    line-height: 1.5;
+    font-size: 14px;
 }
-
-
 
 .container {
-
     max-width: 1000px;
-
     margin: 0 auto;
-
     padding: 20px;
-
 }
-
-
 
 /* Ensure header is also centered within container */
-
 .header {
-
     max-width: 1000px;
-
     margin: 0 auto;
-
     padding: 0 20px;
-
 }
-
-
 
 /* Header Styles */
-
 .header {
-
     display: flex;
-
     justify-content: space-between;
-
     align-items: center;
-
     margin-bottom: 30px;
-
 }
-
-
 
 h1 {
-
     font-size: 24px;
-
     font-weight: 400;
-
     color: #222;
-
 }
 
-
-
-.nav-links {
-
-    display: flex;
-
-    gap: 15px;
-
-    align-items: center;
-
-}
-
-
-
-.nav-link {
-
-    color: #0969da;
-
-    text-decoration: none;
-
-    font-size: 14px;
-
-    padding: 8px 12px;
-
-    border: 1px solid #0969da;
-
-    background: white;
-
-    border-radius: 4px;
-
-}
-
-
-
-.nav-link:hover {
-
-    background: #f6f8fa;
-
-}
-
-
-
+/* Updated User Info Box - jetzt mit allen Navigation Links */
 .user-info {
-
     display: flex;
-
     align-items: center;
-
-    gap: 10px;
-
+    gap: 12px;
     background: white;
-
     padding: 8px 12px;
-
     border: 1px solid #e1e5e9;
-
+    border-radius: 4px;
 }
 
+.user-info span {
+    font-weight: 500;
+}
 
-
-.user-switch {
-
-    color: #0969da;
-
+.user-link {
+    color: #656d76;
     text-decoration: none;
-
-    font-size: 12px;
-
+    font-size: 18px;
+    padding: 4px;
+    transition: color 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
-
-
-.user-switch:hover {
-
-    text-decoration: underline;
-
+.user-link:hover {
+    color: #0969da;
 }
 
-
+/* Nav Links - jetzt in user-info integriert */
+.nav-links {
+    display: none; /* Wird nicht mehr benötigt */
+}
 
 /* Form Elements */
-
 input[type="text"], 
-
 input[type="date"],
-
 input[type="datetime-local"],
-
 textarea {
-
     padding: 8px 12px;
-
     border: 1px solid #d0d7de;
-
     background: white;
-
     font-size: 14px;
-
     outline: none;
-
 }
-
-
 
 input[type="text"]:focus,
-
 input[type="date"]:focus,
-
 input[type="datetime-local"]:focus,
-
 textarea:focus {
-
     border-color: #0969da;
-
 }
-
-
 
 /* Buttons */
-
 .btn {
-
     padding: 8px 16px;
-
     border: 1px solid #d0d7de;
-
     background: white;
-
     color: #333;
-
     cursor: pointer;
-
     font-size: 14px;
-
     text-decoration: none;
-
     display: inline-block;
-
     border-radius: 4px;
-
 }
-
-
 
 .btn:hover {
-
     background: #f6f8fa;
-
 }
-
-
 
 .btn-primary {
-
     background: #0969da;
-
     color: white;
-
     border-color: #0969da;
-
 }
-
-
 
 .btn-primary:hover {
-
     background: #0860ca;
-
 }
-
-
 
 .btn-cancel {
-
     background: #f6f8fa;
-
     border-color: #d0d7de;
-
     color: #333;
-
 }
-
-
 
 /* Sections */
-
 h2 {
-
     font-size: 16px;
-
     font-weight: 500;
-
     margin-bottom: 15px;
-
     color: #444;
-
 }
-
-
 
 /* Responsive */
-
 @media (max-width: 768px) {
-
     .container {
-
         padding: 15px;
-
     }
-
     
-
     .header {
-
         flex-direction: column;
-
         align-items: flex-start;
-
         gap: 10px;
-
     }
-
 }
-
-
-
-/* Optional: Leichter Transparenzeffekt für bessere Lesbarkeit */
-
-/* Entferne diese Kommentare, wenn du möchtest, dass Content-Boxen halbtransparent sind */
-
-/*
-
-.tickets-grid,
-
-.entries-section,
-
-.summary-section,
-
-.date-filter {
-
-    background: rgba(255, 255, 255, 0.95) !important;
-
-}
-
-*/

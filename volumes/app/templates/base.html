@@ -1,65 +1,32 @@
 <!DOCTYPE html>
-
 <html lang="de">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>{% block title %}Zeiterfassung{% endblock %}</title>
-
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3C!-- Hourglass --%3E%3Cpath d='M25 10 L45 10 L35 30 L25 10 M25 50 L45 50 L35 30 L25 50' fill='%23f59e0b' stroke='%23000' stroke-width='2'/%3E%3Crect x='23' y='8' width='24' height='4' fill='%23000'/%3E%3Crect x='23' y='48' width='24' height='4' fill='%23000'/%3E%3C!-- Clock --%3E%3Ccircle cx='70' cy='30' r='22' fill='%23fff' stroke='%23000' stroke-width='2'/%3E%3Cline x1='70' y1='30' x2='70' y2='18' stroke='%23000' stroke-width='2.5' stroke-linecap='round'/%3E%3Cline x1='70' y1='30' x2='78' y2='30' stroke='%23000' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='70' cy='30' r='3' fill='%23000'/%3E%3C/svg%3E">
-
     {% block extra_css %}{% endblock %}
-
 </head>
-
 <body>
-
     <div class="header">
-
         <h1>{% block page_title %}Zeiterfassung{% endblock %}</h1>
-
-        <div class="nav-links">
-
-            {% block nav_links %}{% endblock %}
-
-        </div>
-
         {% if current_user %}
-
         <div class="user-info">
-
             <span>{{ current_user.username }}</span>
-
+            <a href="{{ url_for('index') }}" class="user-link" title="Zeiterfassung">⌛</a>
+            <a href="{{ url_for('summary') }}" class="user-link" title="Zusammenfassung">📊</a>
             <a href="{{ url_for('change_password') }}" class="user-link" title="Passwort ändern">🔑</a>
-
             <a href="{{ url_for('logout') }}" class="user-link" title="Abmelden">🚪</a>
-
         </div>
-
         {% endif %}
-
     </div>
-
     
-
     <div class="container">
-
         {% block content %}{% endblock %}
-
     </div>
-
     
-
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-
     {% block extra_js %}{% endblock %}
-
 </body>
-
 </html>

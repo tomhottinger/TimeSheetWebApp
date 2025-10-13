@@ -1,750 +1,457 @@
 /* Timesheet-specific styles */
 
-
-
 /* Current Timer */
-
 .current-timer {
-
     text-align: center;
-
     margin-bottom: 20px;
-
     font-size: 16px;
-
     color: #666;
-
 }
-
-
 
 /* Tickets Grid */
-
 .tickets-grid {
-
     display: grid;
-
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-
     gap: 1px;
-
     background: #d0d7de;
-
     border: 1px solid #d0d7de;
-
     margin-bottom: 30px;
-
+    overflow: visible;
 }
-
-
 
 .ticket-btn {
-
     padding: 12px 16px;
-
     background: white;
-
     color: white;
-
     text-decoration: none;
-
     text-align: center;
-
     font-size: 13px;
-
     font-weight: 500;
-
     display: flex;
-
+    flex-direction: column;
     align-items: center;
-
     justify-content: center;
-
-    min-height: 48px;
-
+    min-height: 80px;
     border: none;
-
     cursor: pointer;
-
     position: relative;
-
+    z-index: 1;
+    overflow: visible;
 }
-
-
 
 .ticket-btn:hover {
-
     opacity: 0.9;
-
 }
-
-
 
 .ticket-btn.active {
-
-    box-shadow: inset 0 0 0 2px #000;
-
+    box-shadow: inset 0 0 0 3px #000;
 }
 
+.ticket-name {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
 
+/* Ticket Links unterhalb Name */
+.ticket-links {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+    font-size: 16px;
+}
+
+.ticket-links a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.ticket-links a:hover {
+    color: rgba(255, 255, 255, 1);
+}
+
+/* Dropdown Menu für Actions */
+.ticket-menu {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    z-index: 10;
+}
+
+.ticket-menu-btn {
+    width: 24px;
+    height: 24px;
+    background: rgba(0, 0, 0, 0.3);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.ticket-menu-btn:hover {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.ticket-menu-dropdown {
+    position: fixed;
+    background: white;
+    border: 1px solid #d0d7de;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 140px;
+    z-index: 1000;
+    display: none;
+}
+
+.ticket-menu-dropdown.show {
+    display: block;
+}
+
+.ticket-menu-dropdown button,
+.ticket-menu-dropdown a {
+    display: block;
+    width: 100%;
+    padding: 8px 12px;
+    border: none;
+    background: none;
+    color: #333;
+    text-align: left;
+    cursor: pointer;
+    font-size: 13px;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.ticket-menu-dropdown button:hover,
+.ticket-menu-dropdown a:hover {
+    background: #f6f8fa;
+}
+
+.ticket-menu-dropdown button:first-child,
+.ticket-menu-dropdown a:first-child {
+    border-radius: 4px 4px 0 0;
+}
+
+.ticket-menu-dropdown button:last-child,
+.ticket-menu-dropdown a:last-child {
+    border-radius: 0 0 4px 4px;
+}
+
+.ticket-menu-dropdown .delete-action {
+    color: #cf222e;
+    border-top: 1px solid #e1e5e9;
+}
 
 .add-btn {
-
     background: #656d76;
-
     color: white;
-
     font-size: 24px;
-
     font-weight: bold;
-
 }
-
-
 
 .add-btn:hover {
-
     opacity: 0.8;
-
 }
-
-
-
-.ticket-actions {
-
-    position: absolute;
-
-    top: 4px;
-
-    right: 4px;
-
-    display: none;
-
-    gap: 2px;
-
-}
-
-
-
-.ticket-btn:hover .ticket-actions {
-
-    display: flex;
-
-}
-
-
-
-.action-btn {
-
-    width: 18px;
-
-    height: 18px;
-
-    border: none;
-
-    cursor: pointer;
-
-    border-radius: 50%;
-
-    font-size: 10px;
-
-    line-height: 1;
-
-    font-weight: bold;
-
-}
-
-
-
-.edit-ticket-btn {
-
-    background: rgba(9, 105, 218, 0.9);
-
-    color: white;
-
-}
-
-
-
-.delete-ticket-btn {
-
-    background: rgba(0,0,0,0.8);
-
-    color: white;
-
-}
-
-
 
 .stop-btn {
-
     background: #1a7f37;
-
     color: white;
-
     border-color: #1a7f37;
-
 }
 
-
-
-/* Entries Section */
-
-.entries-section {
-
+/* Archived Tickets Section */
+.archived-section {
+    margin-top: 30px;
     background: white;
-
     border: 1px solid #e1e5e9;
-
 }
 
-
-
-.date-section {
-
-    border-bottom: 1px solid #e1e5e9;
-
-}
-
-
-
-.date-section:last-child {
-
-    border-bottom: none;
-
-}
-
-
-
-.date-header {
-
+.archived-header {
     background: #f6f8fa;
-
     padding: 12px 16px;
-
     border-bottom: 1px solid #e1e5e9;
-
     cursor: pointer;
-
     display: flex;
-
     justify-content: space-between;
-
     align-items: center;
-
     font-weight: 500;
-
-    color: #333;
-
+    color: #656d76;
 }
 
-
-
-.date-header:hover {
-
+.archived-header:hover {
     background: #f1f3f4;
-
 }
-
-
-
-.date-header.today {
-
-    background: #dbeafe;
-
-    border-bottom-color: #93c5fd;
-
-}
-
-
 
 .collapse-icon {
-
     color: #666;
-
     font-size: 12px;
-
+    transition: transform 0.2s;
 }
 
+.archived-header.collapsed .collapse-icon {
+    transform: rotate(-90deg);
+}
 
+.archived-content {
+    padding: 16px;
+    display: none;
+}
+
+.archived-content.show {
+    display: block;
+}
+
+.archived-tickets {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 8px;
+}
+
+.archived-ticket {
+    padding: 12px;
+    background: #f6f8fa;
+    border: 1px solid #d0d7de;
+    border-radius: 4px;
+    text-align: center;
+    position: relative;
+}
+
+.archived-ticket-name {
+    font-weight: 500;
+    color: #656d76;
+    margin-bottom: 8px;
+}
+
+.archived-ticket-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.archived-ticket-actions button {
+    padding: 4px 8px;
+    font-size: 12px;
+    border: 1px solid #d0d7de;
+    background: white;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.archived-ticket-actions button:hover {
+    background: #f6f8fa;
+}
+
+.archived-ticket-actions .restore-btn {
+    color: #0969da;
+    border-color: #0969da;
+}
+
+.archived-ticket-actions .delete-btn-archived {
+    color: #cf222e;
+    border-color: #cf222e;
+}
+
+/* Entries Section */
+.entries-section {
+    background: white;
+    border: 1px solid #e1e5e9;
+}
+
+.date-section {
+    border-bottom: 1px solid #e1e5e9;
+}
+
+.date-section:last-child {
+    border-bottom: none;
+}
+
+.date-header {
+    background: #f6f8fa;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e1e5e9;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 500;
+    color: #333;
+}
+
+.date-header:hover {
+    background: #f1f3f4;
+}
+
+.date-header.today {
+    background: #dbeafe;
+    border-bottom-color: #93c5fd;
+}
 
 .collapsed .collapse-icon {
-
     transform: rotate(-90deg);
-
 }
-
-
 
 .date-entries {
-
     border-bottom: 1px solid #e1e5e9;
-
 }
-
-
 
 .date-entries:last-child {
-
     border-bottom: none;
-
 }
-
-
 
 .entries-table {
-
     width: 100%;
-
     border-collapse: collapse;
-
     font-size: 13px;
-
 }
-
-
 
 .entries-table th {
-
     background: white;
-
     padding: 8px 12px;
-
     text-align: left;
-
     font-weight: 500;
-
     color: #333;
-
     border-bottom: 1px solid #e1e5e9;
-
 }
-
-
 
 .entries-table td {
-
     padding: 8px 12px;
-
     border-bottom: 1px solid #f1f3f4;
-
     vertical-align: middle;
-
 }
-
-
 
 .entries-table tr:hover {
-
     background: #f6f8fa;
-
 }
-
-
 
 .entries-table input, .entries-table textarea {
-
     width: 100%;
-
     padding: 4px 6px;
-
     border: 1px solid #d0d7de;
-
     background: white;
-
     font-size: 12px;
-
     outline: none;
-
 }
-
-
 
 .entries-table input:focus, .entries-table textarea:focus {
-
     border-color: #0969da;
-
 }
-
-
 
 .entries-table textarea {
-
     resize: vertical;
-
     min-height: 32px;
-
     font-family: inherit;
-
 }
-
-
 
 .duration {
-
     font-weight: 500;
-
     text-align: right;
-
     color: #333;
-
 }
-
-
 
 .delete-btn {
-
     background: #cf222e;
-
     color: white;
-
     border: none;
-
     padding: 4px 8px;
-
     cursor: pointer;
-
     font-size: 12px;
-
 }
-
-
 
 .delete-btn:hover {
-
     background: #a40e26;
-
 }
-
-
 
 .running-indicator {
-
     color: #1a7f37;
-
     font-weight: 500;
-
 }
-
-
 
 .no-tickets {
-
     text-align: center;
-
     color: #656d76;
-
     padding: 40px 20px;
-
     background: white;
-
 }
-
-
 
 .day-total {
-
     color: #656d76;
-
     font-size: 12px;
-
 }
-
-
 
 /* Drag and Drop styles */
-
-
-
-/* Draggable ticket buttons */
-
 .ticket-btn[draggable="true"] {
-
     cursor: move;
-
     transition: opacity 0.2s, border 0.2s, transform 0.2s;
-
 }
-
-
 
 .ticket-btn[draggable="true"]:hover {
-
     opacity: 0.9;
-
 }
-
-
-
-/* Visual feedback during drag */
 
 .ticket-btn.dragging {
-
     opacity: 0.5;
-
     transform: scale(0.95);
-
 }
-
-
 
 .ticket-btn.drag-over {
-
     border: 2px solid #0969da !important;
-
     box-shadow: 0 0 10px rgba(9, 105, 218, 0.3);
-
 }
-
-
-
-/* Prevent text selection during drag operations */
 
 .tickets-grid.dragging {
-
     user-select: none;
-
     -webkit-user-select: none;
-
     -moz-user-select: none;
-
     -ms-user-select: none;
-
 }
-
-
-
-/* Drag handle styling */
 
 .drag-handle {
-
     position: absolute;
-
     top: 2px;
-
     left: 2px;
-
     width: 16px;
-
     height: 16px;
-
     cursor: move;
-
     background: rgba(0, 0, 0, 0.3);
-
     border-radius: 2px;
-
     z-index: 10;
-
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
 }
-
-
 
 .drag-handle::before {
-
     content: "⋮⋮";
-
     font-size: 10px;
-
     color: rgba(255, 255, 255, 0.8);
-
     line-height: 5px;
-
     font-weight: bold;
-
 }
-
-
 
 .drag-handle:hover {
-
     background: rgba(0, 0, 0, 0.5);
-
 }
-
-
 
 .drag-handle:hover::before {
-
     color: white;
-
 }
-
-
-
-/* Remove the old pseudo-element styling since we now have a real element */
-
-.ticket-btn[data-ticket-id]::before {
-
-    display: none;
-
-}
-
-
-
-/* Prevent accidental clicks during drag operations */
-
-.ticket-btn.dragging a {
-
-    pointer-events: none;
-
-}
-
-
 
 /* Responsive */
-
 @media (max-width: 768px) {
-
     .tickets-grid {
-
         grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-
     }
-
     
-
     .entries-table th, .entries-table td {
-
         padding: 6px 8px;
-
     }
-
-}
-/* Zusätzliche CSS-Regeln für verbessertes Drag & Drop */
-
-/* Diese Regeln können am Ende von timesheet.css hinzugefügt werden */
-
-
-
-/* Cursor für draggable Elemente */
-
-.ticket-btn[draggable="true"] {
-
-    cursor: grab;
-
-    transition: opacity 0.2s, transform 0.1s;
-
-}
-
-
-
-.ticket-btn[draggable="true"]:active {
-
-    cursor: grabbing;
-
-}
-
-
-
-/* Visuelles Feedback während des Draggings */
-
-.ticket-btn.dragging {
-
-    opacity: 0.4;
-
-    transform: scale(0.95);
-
-}
-
-
-
-/* Verhindere Text-Selektion während Drag */
-
-.tickets-grid {
-
-    user-select: none;
-
-    -webkit-user-select: none;
-
-    -moz-user-select: none;
-
-    -ms-user-select: none;
-
-}
-
-
-
-/* Drag Handle Styling - optional sichtbarer machen */
-
-.drag-handle {
-
-    position: absolute;
-
-    top: 4px;
-
-    left: 4px;
-
-    width: 20px;
-
-    height: 20px;
-
-    cursor: grab;
-
-    background: rgba(0, 0, 0, 0.2);
-
-    border-radius: 3px;
-
-    z-index: 10;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    opacity: 0.6;
-
-    transition: opacity 0.2s, background 0.2s;
-
-}
-
-
-
-.drag-handle::before {
-
-    content: "⋮⋮";
-
-    font-size: 12px;
-
-    color: white;
-
-    line-height: 8px;
-
-    font-weight: bold;
-
-}
-
-
-
-.ticket-btn:hover .drag-handle {
-
-    opacity: 1;
-
-    background: rgba(0, 0, 0, 0.4);
-
-}
-
-
-
-.drag-handle:active {
-
-    cursor: grabbing;
-
-}
-
-
-
-/* Drop Indicator - wird via JavaScript gesetzt */
-
-.ticket-btn[style*="border-left"] {
-
-    transition: border-left 0.2s, margin-left 0.2s;
-
 }
