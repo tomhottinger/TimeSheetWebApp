@@ -15,10 +15,12 @@
 {% endblock %}
 
 
+
  
+
 {% block nav_links %}
 
-<a href="{{ url_for('summary') }}" class="nav-link">Zusammenfassung</a>
+<a href="{{ url_for('summary') }}" class="nav-link">📊 Zusammenfassung</a>
 
 {% endblock %}
 
@@ -54,7 +56,7 @@
 
     
 
-    <!-- Regular Tickets - now with drag handles 
+    <!-- Regular Tickets - simplified structure for better drag & drop -->
 
     {% for ticket in tickets %}
 
@@ -62,92 +64,51 @@
 
          style="background-color: {{ ticket.color }};"
 
-         data-ticket-id="{{ ticket.id }}">
+         data-ticket-id="{{ ticket.id }}"
 
-        <div class="drag-handle" data-ticket-id="{{ ticket.id }}"></div>
+         draggable="true">
 
-        <a href="{{ url_for('start_timer', ticket_name=ticket.name) }}" 
 
-           style="color: inherit; text-decoration: none; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+
+        <!-- Drag handle - optional, für visuellen Hinweis -->
+
+        <div class="drag-handle" title="Ziehen zum Sortieren"></div>
+
+
+
+        <!-- Klickbarer Link - gesamter Button außer Actions -->
+
+        <a href="{{ url_for('start_timer', ticket_name=ticket.name) }}"
+
+           style="color: inherit; text-decoration: none; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding-left: 24px;">
 
             {{ ticket.name }}
 
         </a>
 
+
+
+        <!-- Action Buttons -->
+
         <div class="ticket-actions">
 
-            <button class="action-btn edit-ticket-btn" onclick="event.stopPropagation(); openEditTicketModal('{{ ticket.id }}')" title="Bearbeiten">✎</button>
+            <button class="action-btn edit-ticket-btn"
 
-            <button class="action-btn delete-ticket-btn" onclick="event.stopPropagation(); if(confirm('Ticket {{ ticket.name }} löschen?')) window.location.href='{{ url_for('delete_ticket', ticket_id=ticket.id) }}'" title="Löschen">×</button>
+                    onclick="event.preventDefault(); event.stopPropagation(); openEditTicketModal('{{ ticket.id }}')"
+
+                    title="Bearbeiten">✎</button>
+
+            <button class="action-btn delete-ticket-btn"
+
+                    onclick="event.preventDefault(); event.stopPropagation(); if(confirm('Ticket {{ ticket.name }} löschen?')) window.location.href='{{ url_for('delete_ticket', ticket_id=ticket.id) }}'"
+
+                    title="Löschen">×</button>
 
         </div>
 
     </div>
 
     {% endfor %}
-    -->
-
-
-
-    <!-- Vereinfachte Ticket-Button Struktur für timesheet.html -->
-
-<!-- Ersetze den "Regular Tickets" Bereich in deinem Template mit diesem Code -->
-
-
-
-<!-- Regular Tickets - simplified structure for better drag & drop -->
-
-{% for ticket in tickets %}
-
-<div class="ticket-btn {% if current_entry_id %}{% for entry in entries %}{% if entry.id == current_entry_id and entry.ticket_name == ticket.name %}active{% endif %}{% endfor %}{% endif %}"
-
-     style="background-color: {{ ticket.color }};"
-
-     data-ticket-id="{{ ticket.id }}"
-
-     draggable="true">
-
-
-
-    <!-- Drag handle - optional, für visuellen Hinweis -->
-
-    <div class="drag-handle" title="Ziehen zum Sortieren"></div>
-
-
-
-    <!-- Klickbarer Link - gesamter Button außer Actions -->
-
-    <a href="{{ url_for('start_timer', ticket_name=ticket.name) }}"
-
-       style="color: inherit; text-decoration: none; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding-left: 24px;">
-
-        {{ ticket.name }}
-
-    </a>
-
-
-
-    <!-- Action Buttons -->
-
-    <div class="ticket-actions">
-
-        <button class="action-btn edit-ticket-btn"
-
-                onclick="event.preventDefault(); event.stopPropagation(); openEditTicketModal('{{ ticket.id }}')"
-
-                title="Bearbeiten">✎</button>
-
-        <button class="action-btn delete-ticket-btn"
-
-                onclick="event.preventDefault(); event.stopPropagation(); if(confirm('Ticket {{ ticket.name }} löschen?')) window.location.href='{{ url_for('delete_ticket', ticket_id=ticket.id) }}'"
-
-                title="Löschen">×</button>
-
-    </div>
-
-</div>
-
-{% endfor %}
 
     
 

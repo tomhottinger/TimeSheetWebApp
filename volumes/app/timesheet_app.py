@@ -1170,15 +1170,131 @@ def summary():
 
     
 
-    today = datetime.now().strftime('%Y-%m-%d')
+    today = datetime.now()
 
-    start_date = request.args.get('start_date', today)
+    
 
-    end_date = request.args.get('end_date', today)
+    # Handle predefined periods
+
+    period = request.args.get('period', 'custom')
+
+    
+
+    if period == 'today':
+
+        start_date = today.strftime('%Y-%m-%d')
+
+        end_date = today.strftime('%Y-%m-%d')
+
+    elif period == 'yesterday':
+
+        yesterday = today - timedelta(days=1)
+
+        start_date = yesterday.strftime('%Y-%m-%d')
+
+        end_date = yesterday.strftime('%Y-%m-%d')
+
+    elif period == 'this_week':
+
+        # Start of week (Monday)
+
+        start_of_week = today - timedelta(days=today.weekday())
+
+        start_date = start_of_week.strftime('%Y-%m-%d')
+
+        end_date = today.strftime('%Y-%m-%d')
+
+    elif period == 'last_week':
+
+        # Last week (Monday to Sunday)
+
+        start_of_last_week = today - timedelta(days=today.weekday() + 7)
+
+        end_of_last_week = start_of_last_week + timedelta(days=6)
+
+        start_date = start_of_last_week.strftime('%Y-%m-%d')
+
+        end_date = end_of_last_week.strftime('%Y-%m-%d')
+
+    elif period == 'this_month':
+
+        start_date = today.replace(day=1).strftime('%Y-%m-%d')
+
+        end_date = today.strftime('%Y-%m-%d')
+
+    elif period == 'last_month':
+
+        # First day of last month
+
+        first_of_this_month = today.replace(day=1)
+
+        last_day_of_last_month = first_of_this_month - timedelta(days=1)
+
+        first_of_last_month = last_day_of_last_month.replace(day=1)
+
+        start_date = first_of_last_month.strftime('%Y-%m-%d')
+
+        end_date = last_day_of_last_month.strftime('%Y-%m-%d')
+
+    else:  # custom
+
+        start_date = request.args.get('start_date', today.strftime('%Y-%m-%d'))
+
+        end_date = request.args.get('end_date', today.strftime('%Y-%m-%d'))
 
     
 
     summary_data, total_time = timesheet.get_time_summary(user_id, start_date, end_date)
+
+    
+
+    # Get detailed entries for the period
+
+    entries = timesheet.get_entries(user_id)
+
+    period_entries = [
+
+        entry for entry in entries
+
+        if entry.end_time and start_date <= entry.start_time[:10] <= end_date
+
+    ]
+
+    
+
+    # Group entries by date
+
+    entries_by_date = defaultdict(list)
+
+    for entry in period_entries:
+
+        entry_date = entry.start_time[:10]
+
+        entries_by_date[entry_date].append(entry)
+
+    
+
+    # Calculate daily totals
+
+    daily_totals = {}
+
+    for date, date_entries in entries_by_date.items():
+
+        daily_total = 0
+
+        for entry in date_entries:
+
+            if entry.end_time:
+
+                start = datetime.fromisoformat(entry.start_time)
+
+                end = datetime.fromisoformat(entry.end_time)
+
+                hours = (end - start).total_seconds() / 3600
+
+                daily_total += hours
+
+        daily_totals[date] = round(daily_total, 2)
 
     
 
@@ -1192,7 +1308,13 @@ def summary():
 
                          start_date=start_date,
 
-                         end_date=end_date)
+                         end_date=end_date,
+
+                         period=period,
+
+                         entries_by_date=dict(entries_by_date),
+
+                         daily_totals=daily_totals)
 
 
 

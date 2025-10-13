@@ -24,20 +24,6 @@ body {
 
     font-size: 14px;
 
-    
-
-    /* Hintergrundbild hinzufügen */
-
-    background-image: url('/static/img/bg.png');
-
-    background-size: cover;
-
-    background-position: center;
-
-    background-repeat: no-repeat;
-
-    background-attachment: fixed;
-
 }
 
 
@@ -317,25 +303,3 @@ h2 {
     }
 
 }
-
-
-
-/* Optional: Leichter Transparenzeffekt für bessere Lesbarkeit */
-
-/* Entferne diese Kommentare, wenn du möchtest, dass Content-Boxen halbtransparent sind */
-
-/*
-
-.tickets-grid,
-
-.entries-section,
-
-.summary-section,
-
-.date-filter {
-
-    background: rgba(255, 255, 255, 0.95) !important;
-
-}
-
-*/

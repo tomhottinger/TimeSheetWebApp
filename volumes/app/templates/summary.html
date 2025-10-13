@@ -12,7 +12,7 @@
 
     /* Summary-specific styles */
 
-    .date-filter {
+    .period-selector {
 
         background: white;
 
@@ -20,19 +20,105 @@
 
         padding: 20px;
 
-        margin-bottom: 30px;
+        margin-bottom: 20px;
 
     }
 
     
 
-    .date-filter h2 {
+    .period-selector h2 {
 
         font-size: 16px;
 
         font-weight: 500;
 
         margin-bottom: 15px;
+
+        color: #444;
+
+    }
+
+    
+
+    .period-buttons {
+
+        display: flex;
+
+        gap: 8px;
+
+        flex-wrap: wrap;
+
+        margin-bottom: 20px;
+
+    }
+
+    
+
+    .period-btn {
+
+        padding: 8px 16px;
+
+        border: 1px solid #d0d7de;
+
+        background: white;
+
+        color: #333;
+
+        cursor: pointer;
+
+        font-size: 14px;
+
+        text-decoration: none;
+
+        border-radius: 4px;
+
+        transition: all 0.2s;
+
+    }
+
+    
+
+    .period-btn:hover {
+
+        background: #f6f8fa;
+
+    }
+
+    
+
+    .period-btn.active {
+
+        background: #0969da;
+
+        color: white;
+
+        border-color: #0969da;
+
+    }
+
+    
+
+    .date-filter {
+
+        background: #f6f8fa;
+
+        border: 1px solid #e1e5e9;
+
+        padding: 15px;
+
+        border-radius: 4px;
+
+    }
+
+    
+
+    .date-filter h3 {
+
+        font-size: 14px;
+
+        font-weight: 500;
+
+        margin-bottom: 10px;
 
         color: #444;
 
@@ -60,6 +146,8 @@
 
         color: #333;
 
+        font-size: 14px;
+
     }
 
     
@@ -69,6 +157,8 @@
         background: white;
 
         border: 1px solid #e1e5e9;
+
+        margin-bottom: 20px;
 
     }
 
@@ -100,13 +190,15 @@
 
         color: #333;
 
+        margin: 0;
+
     }
 
     
 
     .total-time {
 
-        font-size: 16px;
+        font-size: 18px;
 
         font-weight: 600;
 
@@ -216,7 +308,7 @@
 
         color: #656d76;
 
-        font-size: 16px;
+        font-size: 14px;
 
         margin-bottom: 5px;
 
@@ -224,7 +316,197 @@
 
     
 
+    /* Daily breakdown */
+
+    .daily-breakdown {
+
+        background: white;
+
+        border: 1px solid #e1e5e9;
+
+        margin-top: 20px;
+
+    }
+
+    
+
+    .day-section {
+
+        border-bottom: 1px solid #e1e5e9;
+
+    }
+
+    
+
+    .day-section:last-child {
+
+        border-bottom: none;
+
+    }
+
+    
+
+    .day-header {
+
+        background: #f6f8fa;
+
+        padding: 12px 16px;
+
+        border-bottom: 1px solid #e1e5e9;
+
+        cursor: pointer;
+
+        display: flex;
+
+        justify-content: space-between;
+
+        align-items: center;
+
+        font-weight: 500;
+
+        color: #333;
+
+    }
+
+    
+
+    .day-header:hover {
+
+        background: #f1f3f4;
+
+    }
+
+    
+
+    .day-header .day-total {
+
+        color: #0969da;
+
+        font-weight: 600;
+
+    }
+
+    
+
+    .collapse-icon {
+
+        color: #666;
+
+        font-size: 12px;
+
+    }
+
+    
+
+    .collapsed .collapse-icon {
+
+        transform: rotate(-90deg);
+
+    }
+
+    
+
+    .day-entries {
+
+        display: block;
+
+    }
+
+    
+
+    .day-entries.hidden {
+
+        display: none;
+
+    }
+
+    
+
+    .entries-table {
+
+        width: 100%;
+
+        border-collapse: collapse;
+
+        font-size: 13px;
+
+    }
+
+    
+
+    .entries-table th {
+
+        background: white;
+
+        padding: 8px 12px;
+
+        text-align: left;
+
+        font-weight: 500;
+
+        color: #333;
+
+        border-bottom: 1px solid #e1e5e9;
+
+    }
+
+    
+
+    .entries-table td {
+
+        padding: 8px 12px;
+
+        border-bottom: 1px solid #f1f3f4;
+
+    }
+
+    
+
+    .entries-table tr:hover {
+
+        background: #f6f8fa;
+
+    }
+
+    
+
+    .entry-time {
+
+        color: #656d76;
+
+        font-size: 12px;
+
+    }
+
+    
+
+    .entry-duration {
+
+        text-align: right;
+
+        font-weight: 500;
+
+    }
+
+    
+
     @media (max-width: 768px) {
+
+        .period-buttons {
+
+            flex-direction: column;
+
+        }
+
+        
+
+        .period-btn {
+
+            width: 100%;
+
+        }
+
+        
 
         .date-inputs {
 
@@ -268,39 +550,103 @@
 
 {% block content %}
 
-<!-- Date Filter -->
+<!-- Period Selector -->
 
-<div class="date-filter">
+<div class="period-selector">
 
-    <h2>Zeitraum auswählen</h2>
+    <h2>📊 Zeitraum wählen</h2>
 
-    <form method="get" action="{{ url_for('summary') }}">
+    
 
-        <div class="date-inputs">
+    <div class="period-buttons">
 
-            <label for="start_date">Von:</label>
+        <a href="{{ url_for('summary', period='today') }}" 
 
-            <input type="date" id="start_date" name="start_date" value="{{ start_date }}" required>
+           class="period-btn {% if period == 'today' %}active{% endif %}">
 
-            
+            Heute
 
-            <label for="end_date">Bis:</label>
+        </a>
 
-            <input type="date" id="end_date" name="end_date" value="{{ end_date }}" required>
+        <a href="{{ url_for('summary', period='yesterday') }}" 
 
-            
+           class="period-btn {% if period == 'yesterday' %}active{% endif %}">
 
-            <button type="submit" class="btn btn-primary">Aktualisieren</button>
+            Gestern
 
-        </div>
+        </a>
 
-    </form>
+        <a href="{{ url_for('summary', period='this_week') }}" 
+
+           class="period-btn {% if period == 'this_week' %}active{% endif %}">
+
+            Diese Woche
+
+        </a>
+
+        <a href="{{ url_for('summary', period='last_week') }}" 
+
+           class="period-btn {% if period == 'last_week' %}active{% endif %}">
+
+            Letzte Woche
+
+        </a>
+
+        <a href="{{ url_for('summary', period='this_month') }}" 
+
+           class="period-btn {% if period == 'this_month' %}active{% endif %}">
+
+            Dieser Monat
+
+        </a>
+
+        <a href="{{ url_for('summary', period='last_month') }}" 
+
+           class="period-btn {% if period == 'last_month' %}active{% endif %}">
+
+            Letzter Monat
+
+        </a>
+
+    </div>
+
+    
+
+    <div class="date-filter">
+
+        <h3>Oder: Freier Zeitraum</h3>
+
+        <form method="get" action="{{ url_for('summary') }}">
+
+            <input type="hidden" name="period" value="custom">
+
+            <div class="date-inputs">
+
+                <label for="start_date">Von:</label>
+
+                <input type="date" id="start_date" name="start_date" value="{{ start_date }}" required>
+
+                
+
+                <label for="end_date">Bis:</label>
+
+                <input type="date" id="end_date" name="end_date" value="{{ end_date }}" required>
+
+                
+
+                <button type="submit" class="btn btn-primary">Anzeigen</button>
+
+            </div>
+
+        </form>
+
+    </div>
 
 </div>
 
 
 
-<!-- Summary Results -->
+<!-- Summary by Ticket -->
 
 <div class="summary-section">
 
@@ -397,5 +743,203 @@
     {% endif %}
 
 </div>
+
+
+
+<!-- Daily Breakdown -->
+
+{% if entries_by_date %}
+
+<div class="daily-breakdown">
+
+    <div class="summary-header">
+
+        <h2>Detaillierte Tagesansicht</h2>
+
+    </div>
+
+    
+
+    {% for date in entries_by_date.keys()|sort(reverse=True) %}
+
+        {% set day_entries = entries_by_date[date] %}
+
+        <div class="day-section">
+
+            <div class="day-header" onclick="toggleDay('{{ date }}')">
+
+                <span>
+
+                    {{ date }}
+
+                    {% if date == start_date and date == end_date %}
+
+                        (Heute)
+
+                    {% endif %}
+
+                </span>
+
+                <span>
+
+                    <span class="day-total">{{ "%.2f"|format(daily_totals.get(date, 0)) }}h</span>
+
+                    <span class="collapse-icon">▼</span>
+
+                </span>
+
+            </div>
+
+            <div class="day-entries" id="day-{{ date }}">
+
+                <table class="entries-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Ticket</th>
+
+                            <th>Zeitraum</th>
+
+                            <th style="text-align: right;">Dauer</th>
+
+                            <th>Bemerkungen</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for entry in day_entries|sort(attribute='start_time') %}
+
+                        <tr>
+
+                            <td class="ticket-name">{{ entry.ticket_name }}</td>
+
+                            <td class="entry-time">
+
+                                {{ entry.start_time[11:16] }} - 
+
+                                {% if entry.end_time %}
+
+                                    {{ entry.end_time[11:16] }}
+
+                                {% else %}
+
+                                    läuft...
+
+                                {% endif %}
+
+                            </td>
+
+                            <td class="entry-duration">
+
+                                {% if entry.end_time %}
+
+                                    {% set start = entry.start_time | as_datetime %}
+
+                                    {% set end = entry.end_time | as_datetime %}
+
+                                    {% set duration = ((end - start).total_seconds() / 3600) | round(2) %}
+
+                                    {{ "%.2f"|format(duration) }}h
+
+                                {% else %}
+
+                                    -
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                {% if entry.memo %}
+
+                                    {{ entry.memo }}
+
+                                {% else %}
+
+                                    <span style="color: #656d76;">-</span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+{% endif %}
+
+
+
+<script>
+
+function toggleDay(date) {
+
+    const dayEntries = document.getElementById('day-' + date);
+
+    const header = event.currentTarget;
+
+    
+
+    if (dayEntries.classList.contains('hidden')) {
+
+        dayEntries.classList.remove('hidden');
+
+        header.classList.remove('collapsed');
+
+    } else {
+
+        dayEntries.classList.add('hidden');
+
+        header.classList.add('collapsed');
+
+    }
+
+}
+
+
+
+// Keep first day open by default
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    // First day is already open, collapse others
+
+    const allDays = document.querySelectorAll('.day-entries');
+
+    if (allDays.length > 1) {
+
+        for (let i = 1; i < allDays.length; i++) {
+
+            allDays[i].classList.add('hidden');
+
+            allDays[i].previousElementSibling.classList.add('collapsed');
+
+        }
+
+    }
+
+});
+
+</script>
+
+
 
 {% endblock %}
